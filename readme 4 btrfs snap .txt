@@ -1,13 +1,6 @@
-﻿script -t 2> timingfile
-scriptreplay timingfile
-script -a typescript --timing=timingfile
-less typescript
-
-mkdir /home/btrfssnap
-cd /home/btrfssnap
+btrfs и снепшоты.
+* поставить btrfs - с кешем, снэпшотами - разметить здесь каталог /opt
 -->%-------------------
-
-# * поставить btrfs - с кешем, снэпшотами - разметить здесь каталог /opt
 
 # Форматировать в btrfs диск sdb
 mkfs.btrfs -L opt /dev/sdb
