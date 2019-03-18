@@ -1,15 +1,8 @@
-﻿script -t 2> timingfile
-scriptreplay timingfile
-script -a typescript --timing=timingfile
-less typescript
-
-mkdir /home/varmirror
-cd /home/varmirror
--->%-------------------
 Как работает LVM Mirror
 	1. создать vg из двух дисков, 
-	2. создать раздел внутри vg при указании опции -m1   
-	3. - будут созданы 2тома на разных pv
+	2. создать раздел внутри vg 
+           при указании опции -m1 будут созданы 2тома на разных pv
+-->%-------------------
 
 # /var на LVM Mirror
 lsblk
