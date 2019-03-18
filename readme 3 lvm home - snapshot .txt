@@ -1,20 +1,14 @@
-script -t 2> timingfile
-scriptreplay timingfile
-script -a typescript --timing=timingfile
-less typescript
-
-mkdir /tmp/homesnap
-cd /tmp/homesnap
+РЎРЅРµРїС€РѕС‚С‹ РЅР° lvm.
 -->%-------------------
 
-# Выделить отдельный lv под /home 
+# Р’С‹РґРµР»РёС‚СЊ РѕС‚РґРµР»СЊРЅС‹Р№ lv РїРѕРґ /home 
 lvcreate -n LogVolHOME -L 2G /dev/VolGroup00
-# Форматировать том в ext4
+# Р¤РѕСЂРјР°С‚РёСЂРѕРІР°С‚СЊ С‚РѕРј РІ ext4
 mkfs.ext4 /dev/VolGroup00/LogVolHOME
-# Монтировать
+# РњРѕРЅС‚РёСЂРѕРІР°С‚СЊ
 mkdir /mnt/LogVolHOME
 mount /dev/VolGroup00/LogVolHOME /mnt/LogVolHOME
-# Копировать директорию /home на новый lv
+# РљРѕРїРёСЂРѕРІР°С‚СЊ РґРёСЂРµРєС‚РѕСЂРёСЋ /home РЅР° РЅРѕРІС‹Р№ lv
 cp -aR /home/* /mnt/LogVolHOME
 ll /mnt/LogVolHOME/
 ll /home/
@@ -22,30 +16,30 @@ rm -rf /home/*
 ll /home/
 umount /mnt/LogVolHOME
 mount /dev/VolGroup00/LogVolHOME /home
-# Править /etc/fstab для автоматического монтирования /home
+# РџСЂР°РІРёС‚СЊ /etc/fstab РґР»СЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРѕРіРѕ РјРѕРЅС‚РёСЂРѕРІР°РЅРёСЏ /home
 echo "`blkid | grep HOME | awk '{print $2}'` /home ext4 defaults 0 0" >> /etc/fstab 
 
 # reboot
 ll /home/
 df -hT
 
-# Проверить снепшоты.
+# РџСЂРѕРІРµСЂРёС‚СЊ СЃРЅРµРїС€РѕС‚С‹.
 
-# Создать файлы в /home/
+# РЎРѕР·РґР°С‚СЊ С„Р°Р№Р»С‹ РІ /home/
 touch /home/file{1..20}
 ll /home/
-# Снять снепшот
+# РЎРЅСЏС‚СЊ СЃРЅРµРїС€РѕС‚
 lvcreate -s -L 50MB -n homedir_snap VolGroup00/LogVolHOME
-# Показать % занятого места в снепшоте.
+# РџРѕРєР°Р·Р°С‚СЊ % Р·Р°РЅСЏС‚РѕРіРѕ РјРµСЃС‚Р° РІ СЃРЅРµРїС€РѕС‚Рµ.
 lvs
-# Удалить часть файлов.
+# РЈРґР°Р»РёС‚СЊ С‡Р°СЃС‚СЊ С„Р°Р№Р»РѕРІ.
 rm -f /home/file{11..20}
 ll /home/
-# Восстановиться из снапшота
+# Р’РѕСЃСЃС‚Р°РЅРѕРІРёС‚СЊСЃСЏ РёР· СЃРЅР°РїС€РѕС‚Р°
 umount /home
 # lsof | grep '/home'
 # kill -9 1343
-# Восстановится и snap удалится сам.
+# Р’РѕСЃСЃС‚Р°РЅРѕРІРёС‚СЃСЏ Рё snap СѓРґР°Р»РёС‚СЃСЏ СЃР°Рј.
 lvconvert --merge /dev/VolGroup00/homedir_snap
 mount /home
 # reboot
